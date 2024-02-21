@@ -18,7 +18,7 @@ const App: FC = () => {
 
   useLayoutEffect(() => {
     countRef.current = updateCount
-    console.log(count)
+    console.log(count) // 每次都是最新的值
   })
 
   useEffect(() => {
