@@ -1,7 +1,9 @@
-import React, { FC } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { CalendarProps } from '.'
 import { Dayjs } from 'dayjs'
-
+import CalendarLocale from './locale/en-US'
+import LocaleContext from './LocaleContext'
+import allLocales from './locale'
 interface MonthCalendarProps extends CalendarProps {}
 
 const getAllDays = (date: Dayjs) => {
@@ -37,7 +39,11 @@ const getAllDays = (date: Dayjs) => {
   return daysInfo
 }
 
-const renderDays = (days: Array<{ date: Dayjs; currentMonth: boolean }>) => {
+const renderDays = (
+  days: Array<{ date: Dayjs; currentMonth: boolean }>,
+  dateRender: MonthCalendarProps['dateRender'],
+  dateInnerContent: MonthCalendarProps['dateInnerContent']
+) => {
   // 将数据拆分成6行7列的jsx
   const rows = []
   for (let i = 0; i < 6; i++) {
@@ -55,7 +61,19 @@ const renderDays = (days: Array<{ date: Dayjs; currentMonth: boolean }>) => {
           }
           key={j}
         >
-          {item.date.date()}
+          {/* {item.date.date()} */}
+          {dateRender ? (
+            dateRender(item.date)
+          ) : (
+            <div className="calendar-month-body-cell-date">
+              <div className="calendar-month-body-cell-date-value">
+                {item.date.date()}
+              </div>
+              <div className="calendar-month-body-cell-date-content">
+                {dateInnerContent?.(item.date)}
+              </div>
+            </div>
+          )}
         </div>
       )
     }
@@ -71,8 +89,18 @@ const renderDays = (days: Array<{ date: Dayjs; currentMonth: boolean }>) => {
 }
 
 const MonthCalendar: FC<MonthCalendarProps> = (props: MonthCalendarProps) => {
-  const { value } = props
-  const weekList = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+  const { value, dateRender, dateInnerContent } = props
+  const { locale } = useContext(LocaleContext)
+  const CalendarLocale = allLocales[locale]
+  const weekList = [
+    'sunday',
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+  ]
   const allDays = getAllDays(value)
   console.log(allDays)
   return (
@@ -81,12 +109,14 @@ const MonthCalendar: FC<MonthCalendarProps> = (props: MonthCalendarProps) => {
       <div className="calendar-month-week-list">
         {weekList.map((week) => (
           <div className="calendar-month-week-list-item" key={week}>
-            {week}
+            {CalendarLocale.week[week]}
           </div>
         ))}
       </div>
       {/* 日期 */}
-      <div className="calendar-month-body">{renderDays(allDays)}</div>
+      <div className="calendar-month-body">
+        {renderDays(allDays, dateRender, dateInnerContent)}
+      </div>
     </div>
   )
 }

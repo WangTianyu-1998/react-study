@@ -1,7 +1,7 @@
 .calendar {
     width: 100%;
 
-    height: 200px;
+    min-height: 200px;
     // background: blue;
 }
 
@@ -34,12 +34,16 @@
         &-cell {
             flex: 1;
             border: 1px solid #eee;
-            padding: 10px;
+            overflow: hidden;
 
             color: #ccc;
 
             &-current {
                 color: #000;
+            }
+
+            &-date {
+                padding: 10px;
             }
         }
 
