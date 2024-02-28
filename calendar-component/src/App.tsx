@@ -7,7 +7,7 @@ const App: FC = () => {
       <Calendar
         value={dayjs(new Date())}
         className="aa"
-        locale="en-US"
+        locale="zh-CN"
         dateInnerContent={(value) => {
           return (
             <div>
@@ -16,6 +16,9 @@ const App: FC = () => {
               </p>
             </div>
           )
+        }}
+        onChange={(date) => {
+          console.log('选择的日期是:' + date)
         }}
       />
     </div>

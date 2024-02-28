@@ -4,7 +4,11 @@ import { Dayjs } from 'dayjs'
 import CalendarLocale from './locale/en-US'
 import LocaleContext from './LocaleContext'
 import allLocales from './locale'
-interface MonthCalendarProps extends CalendarProps {}
+import cs from 'classnames'
+interface MonthCalendarProps extends CalendarProps {
+  handleSelected?: (date: Dayjs) => void
+  curMonth: Dayjs
+}
 
 const getAllDays = (date: Dayjs) => {
   // 固定42天
@@ -42,16 +46,16 @@ const getAllDays = (date: Dayjs) => {
 const renderDays = (
   days: Array<{ date: Dayjs; currentMonth: boolean }>,
   dateRender: MonthCalendarProps['dateRender'],
-  dateInnerContent: MonthCalendarProps['dateInnerContent']
+  dateInnerContent: MonthCalendarProps['dateInnerContent'],
+  value: Dayjs,
+  handleSelected?: MonthCalendarProps['handleSelected']
 ) => {
   // 将数据拆分成6行7列的jsx
   const rows = []
   for (let i = 0; i < 6; i++) {
     const row = []
     for (let j = 0; j < 7; j++) {
-      console.log(i * 7 + j, '222')
       const item = days[i * 7 + j]
-      console.log(item.date.date(), 'item.date.date()')
       // 每一列
       row[j] = (
         <div
@@ -60,13 +64,21 @@ const renderDays = (
             (item.currentMonth ? 'calendar-month-body-cell-current' : '')
           }
           key={j}
+          onClick={() => handleSelected?.(item.date)}
         >
           {/* {item.date.date()} */}
           {dateRender ? (
             dateRender(item.date)
           ) : (
             <div className="calendar-month-body-cell-date">
-              <div className="calendar-month-body-cell-date-value">
+              <div
+                className={cs(
+                  'calendar-month-body-cell-date-value',
+                  value.format('YYYY-MM-DD') === item.date.format('YYYY-MM-DD')
+                    ? 'calendar-month-body-cell-date-selected'
+                    : ''
+                )}
+              >
                 {item.date.date()}
               </div>
               <div className="calendar-month-body-cell-date-content">
@@ -79,7 +91,6 @@ const renderDays = (
     }
     rows.push(row)
   }
-  console.log(rows, 'rows')
   // 每一行
   return rows.map((row, index) => (
     <div className="calendar-month-body-row" key={index}>
@@ -89,7 +100,8 @@ const renderDays = (
 }
 
 const MonthCalendar: FC<MonthCalendarProps> = (props: MonthCalendarProps) => {
-  const { value, dateRender, dateInnerContent } = props
+  const { value, dateRender, dateInnerContent, handleSelected, curMonth } =
+    props
   const { locale } = useContext(LocaleContext)
   const CalendarLocale = allLocales[locale]
   const weekList = [
@@ -101,8 +113,7 @@ const MonthCalendar: FC<MonthCalendarProps> = (props: MonthCalendarProps) => {
     'friday',
     'saturday',
   ]
-  const allDays = getAllDays(value)
-  console.log(allDays)
+  const allDays = getAllDays(curMonth)
   return (
     <div className="calendar-month">
       {/* 星期 */}
@@ -115,7 +126,13 @@ const MonthCalendar: FC<MonthCalendarProps> = (props: MonthCalendarProps) => {
       </div>
       {/* 日期 */}
       <div className="calendar-month-body">
-        {renderDays(allDays, dateRender, dateInnerContent)}
+        {renderDays(
+          allDays,
+          dateRender,
+          dateInnerContent,
+          value,
+          handleSelected
+        )}
       </div>
     </div>
   )

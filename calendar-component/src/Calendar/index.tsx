@@ -1,7 +1,7 @@
-import React, { CSSProperties, FC, ReactNode } from 'react'
+import React, { CSSProperties, FC, ReactNode, useState } from 'react'
 import './index.scss'
 import MonthCalendar from './MonthCalendar'
-import { Dayjs } from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import Header from './Header'
 import cs from 'classnames'
 import LocaleContext from './LocaleContext'
@@ -21,11 +21,30 @@ export type CalendarProps = {
 }
 
 const Calendar: FC<CalendarProps> = (props: CalendarProps) => {
-  const { value, style, className, locale } = props
+  const { value, style, className, locale, onChange } = props
+  const [curValue, setCurValue] = useState<Dayjs>(value)
+  const [curMonth, setCurMonth] = useState<Dayjs>(value)
 
   // 合并css
   const classNames = cs('calendar', className)
 
+  const handleSelected = (date: Dayjs) => {
+    setCurValue(date)
+    setCurMonth(date)
+    onChange?.(date)
+  }
+  const nextMonthHandler = () => {
+    setCurMonth(curMonth.add(1, 'month'))
+  }
+  const prevMonthHandler = () => {
+    setCurMonth(curMonth.subtract(1, 'month'))
+  }
+  const toDayHandler = () => {
+    const date = dayjs(new Date())
+    setCurMonth(date)
+    setCurValue(date)
+    onChange?.(date)
+  }
   return (
     <LocaleContext.Provider
       value={{
@@ -34,8 +53,18 @@ const Calendar: FC<CalendarProps> = (props: CalendarProps) => {
       }}
     >
       <div className={classNames} style={style}>
-        <Header />
-        <MonthCalendar {...props} />
+        <Header
+          value={curMonth}
+          prevMonthHandler={prevMonthHandler}
+          nextMonthHandler={nextMonthHandler}
+          toDayHandler={toDayHandler}
+        />
+        <MonthCalendar
+          {...props}
+          value={curValue}
+          curMonth={curMonth}
+          handleSelected={handleSelected}
+        />
       </div>
     </LocaleContext.Provider>
   )
