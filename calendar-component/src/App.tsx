@@ -1,10 +1,17 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import dayjs from 'dayjs'
 import Calendar from './Calendar'
 const App: FC = () => {
+  const [count, setCount] = useState(0)
+  const handleClick = () => {
+    console.log(count)
+    setCount((prev) => prev + 1)
+  }
   return (
     <div className="App">
-      <Calendar
+      {count}
+      <button onClick={handleClick}>add</button>
+      {/* <Calendar 
         value={dayjs(new Date())}
         className="aa"
         locale="zh-CN"
@@ -20,7 +27,7 @@ const App: FC = () => {
         onChange={(date) => {
           console.log('选择的日期是:' + date)
         }}
-      />
+      /> */}
     </div>
   )
 }
