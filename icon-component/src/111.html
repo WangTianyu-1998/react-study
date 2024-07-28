@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style></style>
+  </head>
+  <body>
+    <!-- 
+      填充颜色用currentColor, 也就是color的值;
+      如果currentcolor 用于color属性的值,那么会给元素继承color属性的值
+    -->
+    <div style="color: blue; border: 1px dashed currentColor">
+      这个文本的颜色是蓝色
+      <div style="background: currentColor; height: 9px"></div>
+      这个块的边框也是蓝色.
+    </div>
+
+    <script type="module"></script>
+  </body>
+</html>

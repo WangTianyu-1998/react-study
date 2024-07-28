@@ -1,0 +1,19 @@
+// icon 设置为inline-block,也就是行内元素但是可以设置宽高
+// icon-spin 执行无线旋转动画
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.icon {
+    display: inline-block;
+}
+
+.icon-spin {
+    animation: spin 1s infinite linear;
+}
