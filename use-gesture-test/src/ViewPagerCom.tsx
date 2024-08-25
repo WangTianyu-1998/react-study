@@ -1,14 +1,15 @@
 import { animated, useSprings } from "@react-spring/web";
 import { useDrag } from "@use-gesture/react";
-import React, { FC, useRef } from "react";
-
-const pages = [
-  "https://images.pexels.com/photos/62689/pexels-photo-62689.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-  "https://images.pexels.com/photos/733853/pexels-photo-733853.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-  "https://images.pexels.com/photos/4016596/pexels-photo-4016596.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-  "https://images.pexels.com/photos/351265/pexels-photo-351265.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-  "https://images.pexels.com/photos/924675/pexels-photo-924675.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
-];
+import dayjs from "dayjs";
+import React, { FC, useEffect, useRef, useState } from "react";
+import "./App5.css";
+//@ts-ignore
+import aa from "./wukong.mp4";
+//@ts-ignore
+import bb from "./456e18d221c71e5ddc4c3f679ac30292_3840_778.mp4";
+//@ts-ignore
+import cc from "./feature-game-preview.CE3VeZCL.mp4";
+const pages = [aa, cc, bb];
 
 /**
  * 一个列表里多个元素根据 index 计算 x，多个元素同时存在
@@ -29,8 +30,6 @@ const ViewPager: FC = () => {
    */
   const bind = useDrag(
     ({ active, movement: [mx], direction: [xDir], cancel }) => {
-      console.log("🚀 ~ xDir:", xDir);
-      // 当正在拖动并且拖动的距离超过了宽度的一半，就改变 index。
       if (active && Math.abs(mx) > width / 2) {
         let newIndex = index.current + (xDir > 0 ? -1 : 1);
         if (newIndex < 0) {
@@ -49,14 +48,60 @@ const ViewPager: FC = () => {
       });
     }
   );
+
+  const [time, setTime] = useState(dayjs("2024-08-25 17:59:30"));
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime((prevTime) => prevTime.add(1, "second"));
+    }, 1000);
+
+    return () => clearInterval(timer); // 清理定时器
+  }, []);
+
+  const goFullScreen = () => {
+    const elem = document.documentElement as any;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) {
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
+    }
+  };
   return (
-    <div className="wrapper">
+    <div className="time-container">
       {props.map(({ x, scale }, i) => (
-        <animated.div className="page" {...bind()} key={i} style={{ x }}>
+        <>
           <animated.div
-            style={{ scale, backgroundImage: `url(${pages[i]})` }}
-          />
-        </animated.div>
+            className="page"
+            {...bind()}
+            key={i}
+            style={{ x, scale }}
+          >
+            <animated.div>
+              <video
+                src={pages[i]}
+                autoPlay={true}
+                loop
+                muted
+                className="background-video"
+              ></video>
+              <>
+                <img
+                  className="my-img"
+                  src="https://wegame.gtimg.com/g.55555-r.c4663/wukong/assets/logo-wukong.Bu4M0jHS.png"
+                  alt="wuKong"
+                />
+              </>
+            </animated.div>
+          </animated.div>
+          <h1 className="time-display" onClick={goFullScreen}>
+            {time.format("YYYY-MM-DD HH:mm:ss")}
+          </h1>
+        </>
       ))}
     </div>
   );
