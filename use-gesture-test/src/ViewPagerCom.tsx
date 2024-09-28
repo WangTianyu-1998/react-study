@@ -23,7 +23,7 @@ const ViewPager: FC = () => {
   }));
 
   /**
-   * movement: 拖动距离[x,y]
+   * movement: 拖动距离[x,y] s
    * direction: 拖动方向[x,y] 1代表向左上 -1代表向右下
    * active 是否在拖动
    * cancel 取消拖动
