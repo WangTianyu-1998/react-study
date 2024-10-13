@@ -53,9 +53,7 @@ const TestTForm: React.FC = () => {
         </TForm.TItem>
 
         <TForm.TItem>
-          <Button type="primary" htmlType="submit">
-            登录
-          </Button>
+          <Button type="primary">登录</Button>
         </TForm.TItem>
       </TForm>
     </>
