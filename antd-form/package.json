@@ -10,14 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "ahooks": "^3.8.1",
     "antd": "^5.21.3",
     "async-validator": "^4.2.5",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "umi-request": "^1.4.0"
   },
   "devDependencies": {
+    "@types/node": "^22.7.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
