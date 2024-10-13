@@ -1,6 +1,6 @@
 import { Form } from "antd";
 import { FC } from "react";
-import { FormItemHOC } from "../\bcustom-form-item";
+import { FormItemHOC } from "../../FormTable/custom-form-item";
 const FormTest: FC = () => {
   const [form] = Form.useForm();
 
