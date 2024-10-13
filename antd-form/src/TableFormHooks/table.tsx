@@ -1,7 +1,6 @@
 import { useRequest, useSize } from "ahooks";
 import { message, Modal, PaginationProps, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
-import useSelection from "antd/es/table/hooks/useSelection";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchData } from "../api";
 
@@ -66,7 +65,6 @@ export function useGetTableList(url: string, params: Params) {
     params?.initPostData || defaultInitPostData
   );
 
-  console.log(postData, "@@postData");
   // 用于计算非表格高度,从而动态计算表格高度
   const nonTableRef = useRef(null);
   const nonTableMsg = useSize(nonTableRef);
@@ -95,6 +93,7 @@ export function useGetTableList(url: string, params: Params) {
   });
 
   // 请求table数据
+  // 因为修改分页器后 会修改 postData 数据 而 useEffect 监控了 变化就会run发请求
   const { loading, run } = useRequest(fetchData, {
     manual: true,
     onSuccess(res) {
@@ -160,8 +159,10 @@ export function useGetTableList(url: string, params: Params) {
               // 请求成功之后的回调
               successCallbackFunc?.();
             }
-            // 如果传入 skipError 那么 就可以在外面拿到返回值 并执行回调
+            // 如果传入 skipError 那么 就可以在外面拿到接口的返回值
+            // 然后在回调中就可以根据返回值来进行额外操作
             if (skipError === true) {
+              console.log(res);
               successCallbackFunc?.(res);
             }
           },
@@ -196,7 +197,6 @@ export function useGetTableList(url: string, params: Params) {
 
   // 初始化时触发一次异步请求
   useEffect(() => {
-    console.log("render", postData);
     if (!manulRef.current) {
       run(url, { data: postData, method: "POST" });
     }
