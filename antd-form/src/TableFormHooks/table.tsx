@@ -1,6 +1,6 @@
 import { useRequest, useSize } from "ahooks";
 import { message, Modal, PaginationProps, Tooltip } from "antd";
-import { ColumnsType } from "antd/es/table";
+import { ColumnsType, TableProps } from "antd/es/table";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fetchData } from "../api";
 
@@ -53,6 +53,15 @@ interface ListData {
 const defaultInitPostData: ListPostDataProps = {
   page: 1,
   pageSize: 10,
+};
+
+const defaultTableProps: TableProps = {
+  style: { flex: 1 },
+  className: "common-table",
+  bordered: true,
+  size: "middle",
+  loading: false,
+  rowKey: "id",
 };
 
 /**
@@ -179,7 +188,7 @@ export function useGetTableList(url: string, params: Params) {
     const tableHeight = windowHeight - 154 - height - 47 - 132;
 
     return {
-      ...defaultInitPostData,
+      ...defaultTableProps,
       loading,
       pagination, // 分页器信息
       dataSource: listData.list || listData.records || listData.items || [],

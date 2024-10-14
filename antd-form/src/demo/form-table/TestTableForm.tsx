@@ -1,21 +1,29 @@
-import { FC, useRef } from "react";
+import { FC, useRef, useState } from "react";
+
+import { Button, Form, Input, Space, Table } from "antd";
 import {
   useCreateCommonColumns,
   useGetTableList,
-} from "./TableFormHooks/table";
-import { Button, Form, Input, Space, Table } from "antd";
-import { getTableListApi } from "./api";
-import SearchForm from "./FormTable/search-form";
-import { JsonFormItemProps } from "./FormTable/basic-form/index.d";
-import { FormItemHOC } from "./FormTable/custom-form-item";
-import DetailModal, { DetailModalRefProps } from "./DetailModal";
+} from "../../TableFormHooks/table";
+import DetailModal, { DetailModalRefProps } from "../../DetailModal";
+import { getTableListApi } from "../../api";
+import { FormItemHOC } from "../../FormTable/custom-form-item";
+import SearchForm from "../../FormTable/search-form";
+import { JsonFormItemProps } from "../../FormTable/basic-form/index.d";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { DragHandle, DragRow } from "./DragHandle";
 
 const TestTableForm: FC = () => {
   const [form] = Form.useForm();
   const modalRef = useRef<DetailModalRefProps>(null);
   const {
     tableProps,
-    nonTableRef,
     createChangeStatusConfirmFunc,
     searchTableList,
     updateTableList,
@@ -23,11 +31,20 @@ const TestTableForm: FC = () => {
     initPostData: { page: 1, pageSize: 10, botId: 20 },
   });
 
+  console.log(tableProps, "@@tableProps");
+
   const onDel = createChangeStatusConfirmFunc(getTableListApi, (values) => {
     alert("删除成功");
   });
 
   const columns = useCreateCommonColumns([
+    {
+      title: "排序",
+      dataIndex: "sort",
+      width: 80,
+      className: "drag-visible",
+      render: () => <DragHandle />,
+    },
     {
       title: "ID",
       dataIndex: "id",
@@ -101,6 +118,18 @@ const TestTableForm: FC = () => {
       <Input />
     </Form.Item>,
   ];
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
+
+  const onDragEnd = ({ active, over }: DragEndEvent) => {
+    console.log("rendererer");
+    if (active.id !== over?.id) {
+      const prev = tableProps?.dataSource;
+      const activeIndex = prev.findIndex((i) => i.key === active.id);
+      const overIndex = prev.findIndex((i) => i.key === over?.id);
+      const data = arrayMove(prev, activeIndex, overIndex);
+      updateTableList(data);
+    }
+  };
 
   return (
     <>
@@ -120,9 +149,25 @@ const TestTableForm: FC = () => {
           </Button>
         }
       />
-      <div ref={nonTableRef}>
-        <Table {...tableProps} columns={columns} />
-      </div>
+      <DndContext modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+        <SortableContext
+          items={tableProps?.dataSource.map((i: any) => i.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <Table
+            {...tableProps}
+            scroll={{ y: 1200 }}
+            components={{ body: { row: DragRow } }}
+            rowSelection={{
+              selectedRowKeys,
+              onChange: (selectedKeys) => {
+                setSelectedRowKeys(selectedKeys);
+              },
+            }}
+            columns={columns}
+          />
+        </SortableContext>
+      </DndContext>
     </>
   );
 };
