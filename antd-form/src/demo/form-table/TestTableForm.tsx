@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import { FC, useCallback, useRef, useState } from "react";
 
 import { Button, Form, Input, Space, Table } from "antd";
 import {
@@ -18,6 +18,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { DragHandle, DragRow } from "./DragHandle";
+import { useChangeStatusCallbackFn } from "../useChangeStatusCallbackFn";
 
 const TestTableForm: FC = () => {
   const [form] = Form.useForm();
@@ -131,8 +132,29 @@ const TestTableForm: FC = () => {
     }
   };
 
+  const handleOk = useCallback((value: any) => {
+    console.log("ok!", value);
+  }, []);
+
+  const handleCancel = useCallback(() => {
+    console.log("cancel");
+  }, []);
+
+  const handleConfirm = useChangeStatusCallbackFn(handleOk, handleCancel);
+
   return (
     <>
+      {/* <Button
+        onClick={() => {
+          handleConfirm({
+            title: "你确定吗?",
+            postData: { id: 1 },
+            // skipValue: fa'l's,
+          });
+        }}
+      >
+        confirm
+      </Button> */}
       <DetailModal ref={modalRef} onSaveCallback={updateTableList} />
       <SearchForm
         form={form}
