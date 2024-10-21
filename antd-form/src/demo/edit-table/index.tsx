@@ -2,20 +2,10 @@ import React, {
   useContext,
   useEffect,
   useImperativeHandle,
-  useMemo,
-  useRef,
   useState,
 } from "react";
-import type { GetRef, InputRef, TableProps } from "antd";
-import {
-  Button,
-  Form,
-  Input,
-  Popconfirm,
-  Select,
-  Table,
-  Typography,
-} from "antd";
+import type { GetRef, TableProps } from "antd";
+import { Button, Form, Popconfirm, Select, Table, Typography } from "antd";
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
 
@@ -288,6 +278,7 @@ const EditFormTable = () => {
 
   const validatorFormList = () => {
     const value = form.getFieldValue("editFormList");
+    console.log("🚀 ~ validatorFormList ~ value:", value);
     console.log("🚀 ~ validatorFormList ~ value:", value);
     if (value?.length === 0) {
       return Promise.reject("At least one item");
