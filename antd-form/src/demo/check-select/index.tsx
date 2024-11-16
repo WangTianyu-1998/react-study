@@ -13,8 +13,6 @@ interface Props {
   loading?: boolean;
 }
 
-const { Option } = Select;
-
 const CustomSelect: FC<{
   value?: number[];
   onChange?: any;
@@ -67,6 +65,7 @@ const CustomSelect: FC<{
       placeholder={placeholder}
       aria-checked={true}
       options={options}
+      optionFilterProp="label"
       dropdownRender={(menu) => (
         <>
           <div style={{ padding: "8px 12px" }}>
